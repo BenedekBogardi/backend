@@ -33,7 +33,13 @@ async function main() {
                     "kozep_isk",
                     "felso_okt",
                 ]),
-                subjectStudent: "nincs felvett tantárgy"
+                subjectStudent: faker.helpers.arrayElement([
+                    "Matematika",
+                    "Történelem",
+                    "Kémia",
+                    "Informatika",
+                    "Irodalom",
+                ]),
             }
         });
 
