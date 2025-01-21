@@ -7,7 +7,7 @@ async function main() {
     const subjects = ["Matematika", "Történelem", "Kémia", "Informatika", "Irodalom"];
     const assignments = [];
 
-    for (const subject of subjects) {
+    for (let subject of subjects) {
         const assignment = await prisma.assignment.create({
         data: {
             subject: subject,
