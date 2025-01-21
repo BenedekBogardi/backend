@@ -20,7 +20,7 @@ export class CreateTeacherDto {
 
     @IsNotEmpty()
     @Min(0)
-    @Max(30) //változtatható bármikor - a txt file-ban leírtak végett egyelőre ezt állítottam be maximum értéknek
+    @Max(0)
     numberOfStudents: number;
 
     @IsNotEmpty()
