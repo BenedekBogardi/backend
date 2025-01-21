@@ -7,17 +7,24 @@ async function main() {
     const subjects = ["Matematika", "Történelem", "Kémia", "Informatika", "Irodalom"];
     const assignments = [];
 
-    for (let subject of subjects) {
-        const assignment = await prisma.assignment.create({
-        data: {
-            subject: subject,
-            ageGroup: faker.helpers.arrayElement(["alsos", "felsos", "kozep_isk", "felso_okt"]),
-            assignments: faker.lorem.lines(),
-        },
+    for (const subject of subjects) {
+        let assignment = await prisma.assignment.findUnique({
+          where: { subject },
         });
+    
+        if (!assignment) {
+          assignment = await prisma.assignment.create({
+            data: {
+              subject: subject,
+              ageGroup: faker.helpers.arrayElement(["alsos", "felsos", "kozep_isk", "felso_okt"]),
+              assignments: faker.lorem.lines(),
+            },
+          });
+        }
+    
         assignments.push(assignment);
     }
-
+    
     for (let i = 0; i < 20; i++) {
         const randomAssignment = faker.helpers.arrayElement(assignments);
 
