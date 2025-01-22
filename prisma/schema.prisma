@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,31 +8,33 @@ datasource db {
 }
 
 model Assignment {
-  id Int @id @default(autoincrement())
-  subject String @unique
-  ageGroup String
+  id          Int      @id @default(autoincrement())
+  subject     String 
+  ageGroup    String
   assignments String
-  
 
-  Teacher Teacher[]
-  Student Student[]
+  teachers    Teacher[] @relation("TeacherAssignments")
+  students    Student[] @relation("StudentAssignments")
 }
 
 model Teacher {
-  id Int @id @default(autoincrement())
-  name String
-  subject Assignment @relation(fields: [subjectTeacher], references: [subject])
-  subjectTeacher String
-  hourlyRate Int
-  email String
+  id              Int        @id @default(autoincrement())
+  name            String
+  subjectTeacher  String
+  hourlyRate      Int
+  email           String
   numberOfStudents Int
-  rating Int
+  rating          Int
+
+  assignmentId    Int
+  Assignment Assignment[] @relation("TeacherAssignments")
 }
 
 model Student {
-  id Int @id @default(autoincrement())
-  name String
-  ageGroup String
-  subject Assignment @relation(fields: [subjectStudent], references: [subject])
-  subjectStudent String
+  id              Int        @id @default(autoincrement())
+  name            String
+  ageGroup        String
+
+  assignmentId    Int 
+  Assignment Assignment[] @relation("StudentAssignments")
 }
