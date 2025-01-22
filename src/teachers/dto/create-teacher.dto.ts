@@ -27,4 +27,7 @@ export class CreateTeacherDto {
     @Min(0)
     @Max(10)
     rating: number;
+
+    @IsNumber()
+    assignmentId: number;
 }
