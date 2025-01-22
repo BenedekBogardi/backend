@@ -11,11 +11,11 @@ export class TeachersService {
     this.db = db;
   }
 
-  create(createTeacherDto: CreateTeacherDto) {
+  /*create(createTeacherDto: CreateTeacherDto) {
     return this.db.teacher.create({
       data: createTeacherDto
     });
-  }
+  }*/
 
   findAll() {
     return this.db.teacher.findMany();
@@ -29,8 +29,15 @@ export class TeachersService {
     });
   }
 
-  update(id: number, updateTeacherDto: UpdateTeacherDto) {
-    return `This action updates a #${id} teacher`;
+  async update(id: number, updateTeacherDto: UpdateTeacherDto) {
+    try {
+      return await this.db.teacher.update({
+        where: { id },
+        data: updateTeacherDto
+      });
+    } catch {
+      return undefined;
+    }
   }
 
   remove(id: number) {

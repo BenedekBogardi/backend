@@ -7,10 +7,10 @@ import { UpdateTeacherDto } from './dto/update-teacher.dto';
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 
-  @Post()
+  /*@Post()
   create(@Body() createTeacherDto: CreateTeacherDto) {
     return this.teachersService.create(createTeacherDto);
-  }
+  }*/
 
   @Get()
   findAll() {
@@ -26,8 +26,11 @@ export class TeachersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
-    return this.teachersService.update(+id, updateTeacherDto);
+  async update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
+    const teacher = await this.teachersService.update(+id, updateTeacherDto);
+    if (!teacher) throw new NotFoundException('No teacher with ID ' + id);
+ 
+    return teacher;
   }
 
   @Delete(':id')
