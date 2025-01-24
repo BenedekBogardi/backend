@@ -25,6 +25,7 @@ model Teacher {
   email           String
   numberOfStudents Int
   rating          Int
+  password        String
 
   assignmentId    Int
   Assignment Assignment[] @relation("TeacherAssignments")
@@ -34,6 +35,7 @@ model Student {
   id              Int        @id @default(autoincrement())
   name            String
   ageGroup        String
+  password        String
 
   assignmentId    Int 
   Assignment Assignment[] @relation("StudentAssignments")

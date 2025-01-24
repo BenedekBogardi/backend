@@ -14,5 +14,10 @@ export class CreateStudentDto {
     subjectStudent: string;
 
     @IsNumber()
+    @IsNotEmpty()
     assignmentId: number;
+
+    @IsString()
+    @IsNotEmpty()
+    password: string;
 }

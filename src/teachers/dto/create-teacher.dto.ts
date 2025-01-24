@@ -29,5 +29,10 @@ export class CreateTeacherDto {
     rating: number;
 
     @IsNumber()
+    @IsNotEmpty()
     assignmentId: number;
+
+    @IsString()
+    @IsNotEmpty()
+    password: string;
 }
