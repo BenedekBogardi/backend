@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { PrismaService } from 'src/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class TeachersService {
@@ -11,11 +12,17 @@ export class TeachersService {
     this.db = db;
   }
 
-  /*create(createTeacherDto: CreateTeacherDto) {
-    return this.db.teacher.create({
-      data: createTeacherDto
+  async create(createTeacherDto: CreateTeacherDto) {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(createTeacherDto.password, saltRounds);
+
+    return await this.db.teacher.create({
+      data: {
+        ...createTeacherDto,
+        password: hashedPassword,
+      }
     });
-  }*/
+  }
 
   findAll() {
     return this.db.teacher.findMany();
