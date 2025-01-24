@@ -18,7 +18,6 @@ async function main() {
           },
       });
       assignments.push(assignment); 
-      console.log(`Created assignment for ${randomSubject}:`, assignment);
     }
 
     for (let i = 0; i < 20; i++) {
@@ -36,6 +35,7 @@ async function main() {
                 numberOfStudents: 0,
                 rating: faker.number.int({ min: 1, max: 10 }),
                 assignmentId: randomAssignment.id,
+                password: "alma"
             },
         });
     }
@@ -48,6 +48,7 @@ async function main() {
                 name: faker.person.fullName(),
                 ageGroup: faker.helpers.arrayElement(["alsos", "felsos", "kozep_isk", "felso_okt"]),
                 assignmentId: randomAssignment.id,
+                password: faker.lorem.word()
             },
         });
     }
