@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  Admin
+  Teacher
+  Student
+}
+
 model Assignment {
   id          Int      @id @default(autoincrement())
   subject     String 
@@ -22,10 +28,12 @@ model Teacher {
   name            String
   subjectTeacher  String
   hourlyRate      Int
-  email           String
+  email           String    @unique
   numberOfStudents Int
   rating          Int
   password        String
+  role            Role
+  tokens          Token[]
 
   assignmentId    Int
   Assignment Assignment[] @relation("TeacherAssignments")
@@ -34,9 +42,20 @@ model Teacher {
 model Student {
   id              Int        @id @default(autoincrement())
   name            String
+  email           String    @unique
   ageGroup        String
   password        String
+  role            Role
+  tokens          Token[]
 
   assignmentId    Int 
   Assignment Assignment[] @relation("StudentAssignments")
+}
+
+model Token {
+  token String @id
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherId Int
+  studentId Int
 }

@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -26,6 +27,9 @@ async function main() {
         const fName = faker.person.firstName();
         const lName = faker.person.lastName();
 
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash("alma", saltRounds);
+
         await prisma.teacher.create({
             data: {
                 name: `${fName} ${lName}`,
@@ -35,7 +39,8 @@ async function main() {
                 numberOfStudents: 0,
                 rating: faker.number.int({ min: 1, max: 10 }),
                 assignmentId: randomAssignment.id,
-                password: "alma"
+                password: hashedPassword,
+                role: "Teacher"
             },
         });
     }
@@ -43,12 +48,20 @@ async function main() {
     for (let i = 0; i < 20; i++) {
         const randomAssignment = faker.helpers.arrayElement(assignments);
 
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash("banán", saltRounds);
+
+        const fName = faker.person.firstName();
+        const lName = faker.person.lastName();
+
         await prisma.student.create({
             data: {
-                name: faker.person.fullName(),
+                name: `${fName} ${lName}`,
                 ageGroup: faker.helpers.arrayElement(["alsos", "felsos", "kozep_isk", "felso_okt"]),
+                email: `${fName.toLowerCase()}.${lName.toLowerCase()}@citromail.com`,
                 assignmentId: randomAssignment.id,
-                password: faker.lorem.word()
+                password: hashedPassword,
+                role: "Student"
             },
         });
     }
@@ -62,4 +75,5 @@ main()
   .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
+    process.exit(1)
   });
