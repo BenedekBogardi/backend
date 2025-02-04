@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, UnauthorizedException, UseGuards, Request } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { LoginDto } from './dto/login-dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('teachers')
 export class TeachersController {
@@ -12,11 +14,22 @@ export class TeachersController {
     return this.teachersService.create(createTeacherDto);
   }
 
+  @Post('login')
+    async login(@Body() loginData: LoginDto) {
+      try {
+        return await this.teachersService.login(loginData);
+      } catch {
+        throw new UnauthorizedException("Érvénytelen név v. jelszó!")
+      }
+    }
+  
   @Get()
-  findAll() {
-    return this.teachersService.findAll();
-  }
-
+  @UseGuards(AuthGuard('bearer'))
+    findAll(@Request() request) {
+      console.log(request.user);
+      return this.teachersService.findAll();
+    }
+    
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const teacher = await this.teachersService.findOne(+id);

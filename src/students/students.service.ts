@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -27,30 +27,30 @@ export class StudentsService {
   }
 
   async login(loginData: LoginDto) {
-      const student = await this.db.student.findUniqueOrThrow({
-        where: {
-          email: loginData.email
-        }
-      });
-      if (await bcrypt.hash(await student.password, loginData.password)) {
-        const token = randomBytes(32).toString('hex');
-        await this.db.token.create({
-          data: {
-            token,
-            student: {
-              connect: { id: student.id }
-            },
-            teacher: null,
-          }
-        })
-        return {
-          token: token,
-          studentID: student.id,
-        }
-      } else {
-        throw new Error('Invalid password');
-      }
+    const student = await this.db.student.findUnique({
+      where: { email: loginData.email },
+    });
+
+    if (!student || !(await bcrypt.compare(loginData.password, student.password))) {
+      throw new UnauthorizedException('Érvénytelen név v. jelszó!');
     }
+
+    const token = randomBytes(32).toString('hex');
+    await this.db.token.create({
+      data: {
+        token,
+        student: {
+          connect: { id: student.id },
+        },
+        teacher: null
+      },
+    });
+
+    return {
+      token: token,
+      studentID: student.id,
+    };
+  }
 
   findAll() {
     return this.db.student.findMany();
@@ -75,12 +75,12 @@ export class StudentsService {
   async findUserByToken(token: string) {
     const tokenData = await this.db.token.findUnique({
       where: { token },
-      include: { student: true }
-    })
+      include: { student: true },
+    });
+
     if (!tokenData) return null;
     const user = tokenData.student;
     delete user.password;
-    
     return user;
   }
 }

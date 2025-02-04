@@ -14,15 +14,12 @@ export class TokenStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(token: string) {
-    // Try to find a teacher with the token
     const teacher = await this.teachers.findUserByToken(token);
-    if (teacher) return teacher;
+    if (teacher) return { user: teacher, role: 'teacher' };
 
-    // Try to find a student with the token
     const student = await this.students.findUserByToken(token);
-    if (student) return student;
+    if (student) return { user: student, role: 'student' };
 
-    // If neither exists, throw an error
     throw new UnauthorizedException('Invalid token');
   }
 }
