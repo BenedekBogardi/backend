@@ -1,11 +1,11 @@
-/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, UnauthorizedException, UseGuards, Request } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { LoginDto } from './dto/login-dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiHeader, ApiOkResponse, ApiBody, ApiProperty, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiBadRequestResponse, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { Teacher } from './entities/teacher.entity';
 
 @Controller('teachers')
 export class TeachersController {
@@ -26,31 +26,14 @@ export class TeachersController {
       }
     }
   
-  @ApiProperty({
-    type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          example: 'Error'
-        },
-        subjectTeacher: {
-          type: 'string',
-          example: "Történelem"
-        }
-    },
-    required: ['name', 'subjectTeacher']
-   })
-  @ApiTags()
+  
+  @Get()
   @ApiBody({
     description: "List all of the teachers.",
   })
-  @ApiResponse({ status: 201, description: 'Teacher has been succesfully added.'})
+  @ApiResponse({ status: 201, description: 'Teacher has been succesfully added.', type: Teacher})
   @ApiResponse({ status: 403, description: 'Forbidden.'})
-  /*@ApiHeader({
-    name: 'Get all teachers'
-  })*/
-  //may not be required
-  @Get()
+  @ApiResponse({ status: 401, description: 'Unauthorized.'})
   @UseGuards(AuthGuard('bearer'))
     findAll(@Request() request) {
       console.log(request.user);
@@ -65,7 +48,49 @@ export class TeachersController {
     return teacher;
   }
 
-  @Patch(':id')
+  @Patch(':id')  
+  @ApiParam({
+    name: 'assignmentId',
+    type: 'string',
+    description: 'The unique ID of the assignment(s) assigned by the teacher.'
+  })
+  @ApiParam({
+    name: 'password',
+    type: 'string',
+    description: 'The password of the teacher.'
+  })
+  @ApiParam({
+    name: 'rating',
+    type: 'string',
+    description: 'The rating of the teacher by their students. Value can only be a integer between 1 and 10'
+  })
+  @ApiParam({
+    name: 'numberOfStudents',
+    type: 'string',
+    description: 'The number of students taught by the teacher.'
+  })
+  @ApiParam({
+    name: 'email',
+    type: 'string',
+    description: 'The e-mail address of the teacher.'
+  })
+  @ApiParam({
+    name: 'hourlyRate',
+    type: 'string',
+    description: 'The hourly rate/pricing of the teacher.'
+  })
+  @ApiParam({
+    name: 'subjectTeacher',
+    type: 'string',
+    description: 'The suject taught by the teacher.'
+  })
+  @ApiParam({
+    name: 'name',
+    type: 'string',
+    description: 'The full name of the teacher.'
+  })
+  @ApiResponse({ status: 200, description: 'The modified data of the teacher.' })
+  @ApiBadRequestResponse({ description: 'The supplied data was invalid.' })
   async update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
     const teacher = await this.teachersService.update(+id, updateTeacherDto);
     if (!teacher) throw new NotFoundException('No teacher with ID ' + id);
