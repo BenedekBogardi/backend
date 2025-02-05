@@ -41,6 +41,7 @@ export class TeachersController {
     }
     
   @Get(':id')
+  @ApiResponse({ status: 200, description: 'Successfull GET request for the given unique ID of the teacher.', type: Teacher})
   async findOne(@Param('id') id: string) {
     const teacher = await this.teachersService.findOne(+id);
     if (!teacher) throw new NotFoundException('No teacher with ID ' + id);
