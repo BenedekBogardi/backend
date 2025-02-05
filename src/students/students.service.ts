@@ -30,7 +30,7 @@ export class StudentsService {
     const student = await this.db.student.findUnique({
       where: { email: loginData.email },
     });
-
+    console.log((await bcrypt.compare(loginData.password, student.password)));
     if (!student || !(await bcrypt.compare(loginData.password, student.password))) {
       throw new UnauthorizedException('Érvénytelen név v. jelszó!');
     }
@@ -41,8 +41,7 @@ export class StudentsService {
         token,
         student: {
           connect: { id: student.id },
-        },
-        teacher: null
+        }
       },
     });
 

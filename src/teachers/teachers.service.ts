@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -27,29 +27,28 @@ export class TeachersService {
   }
 
   async login(loginData: LoginDto) {
-    const teacher = await this.db.teacher.findUniqueOrThrow({
-      where: {
-        email: loginData.email
-      }
+    const teacher = await this.db.teacher.findUnique({
+      where: { email: loginData.email },
     });
-    if (await bcrypt.hash(await teacher.password, loginData.password)) {
-      const token = randomBytes(32).toString('hex');
-      await this.db.token.create({
-        data: {
-          token,
-          teacher: {
-            connect: { id: teacher.id }
-          },
-          student: null,
-        }
-      })
-      return {
-        token: token,
-        teacherID: teacher.id,
-      }
-    } else {
-      throw new Error('Invalid password');
+    console.log((await bcrypt.compare(loginData.password, teacher.password)));
+    if (!teacher || !(await bcrypt.compare(loginData.password, teacher.password))) {
+      throw new UnauthorizedException('Érvénytelen név v. jelszó!');
     }
+
+    const token = randomBytes(32).toString('hex');
+    await this.db.token.create({
+      data: {
+        token,
+        teacher: {
+          connect: { id: teacher.id },
+        }
+      },
+    });
+
+    return {
+      token: token,
+      teacherId: teacher.id,
+    };
   }
 
   findAll() {

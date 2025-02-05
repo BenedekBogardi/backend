@@ -19,11 +19,9 @@ export class TeachersController {
 
   @Post('login')
     async login(@Body() loginData: LoginDto) {
-      try {
+
         return await this.teachersService.login(loginData);
-      } catch {
-        throw new UnauthorizedException("Érvénytelen név v. jelszó!")
-      }
+      
     }
   
   

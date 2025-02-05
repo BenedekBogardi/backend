@@ -54,8 +54,8 @@ model Student {
 
 model Token {
   token String @id
-  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  teacherId Int
-  studentId Int
+  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  student Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherId Int?
+  studentId Int?
 }
