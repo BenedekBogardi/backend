@@ -5,7 +5,8 @@ export class CreateStudentDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
-        description: 'Full name of student.'
+        description: 'Full name of student.',
+        example: 'John Doe'
     })
     name: string;
     
@@ -13,7 +14,8 @@ export class CreateStudentDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
-        description: 'Age group of student, values can be "alsos", "felsos", "kozep_isk" or "felso_okt".'
+        description: 'Age group of student, values can be "alsos", "felsos", "kozep_isk" or "felso_okt".',
+        example: 'felsos'
     })
     ageGroup: string;
     
@@ -21,7 +23,8 @@ export class CreateStudentDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
-        description: 'The subject selected by the student.'
+        description: 'The subject selected by the student.',
+        example: 'Matematika'
     })
     subjectStudent: string;
     
@@ -29,7 +32,8 @@ export class CreateStudentDto {
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty({
-        description: 'The unique ID of an assignment given to the student.'
+        description: 'The unique ID of an assignment given to the student.',
+        example: '2143'
     })
     assignmentId: number;
     
@@ -37,14 +41,16 @@ export class CreateStudentDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        description: 'The login password of the student.'
+        description: 'The login password of the student.',
+        example: 'Mokus123'
     })
     password: string;
     
     @IsNotEmpty()
     @IsEmail() 
     @ApiProperty({
-        description: 'The students email address.'
+        description: 'The students email address.',
+        example: 'johndoe@citromail.com'
     })
     email: string;
    

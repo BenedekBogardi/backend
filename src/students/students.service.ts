@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -27,12 +27,15 @@ export class StudentsService {
   }
 
   async login(loginData: LoginDto) {
+    if (typeof loginData.email !== 'string' || typeof loginData.password !== 'string') {
+      throw new HttpException('Invalid input: email and password must be strings', HttpStatus.BAD_REQUEST);
+    }
     const student = await this.db.student.findUnique({
       where: { email: loginData.email },
     });
     console.log((await bcrypt.compare(loginData.password, student.password)));
     if (!student || !(await bcrypt.compare(loginData.password, student.password))) {
-      throw new UnauthorizedException('Érvénytelen név v. jelszó!');
+      throw new UnauthorizedException('Wrong email or password!');
     }
 
     const token = randomBytes(32).toString('hex');
@@ -56,6 +59,9 @@ export class StudentsService {
   }
 
   findOne(id: number) {
+    if (isNaN(id)) {
+      throw new HttpException('Invalid ID: must be a number', HttpStatus.BAD_REQUEST);
+    }
     return this.db.student.findUnique({
       where: {
         id
@@ -63,12 +69,33 @@ export class StudentsService {
     });
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async update(id: number, updateStudentDto: UpdateStudentDto) {
+    if (isNaN(id)) {
+      throw new HttpException('Invalid ID: must be a number', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return await this.db.student.update({
+        where: { id },
+        data: updateStudentDto
+      });
+    } catch {
+      return undefined;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} student`;
+  async remove(id: number) {
+    if (isNaN(id)) {
+      throw new HttpException('Invalid ID: must be a number', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return await this.db.student.delete({
+        where: {
+          id
+        }
+      })
+    } catch {
+      return undefined;
+    }
   }
 
   async findUserByToken(token: string) {
