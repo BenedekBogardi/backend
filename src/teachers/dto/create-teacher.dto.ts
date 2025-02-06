@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsNumber, IsString, Max, Min } from "class-validator";
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 
 
 export class CreateTeacherDto {

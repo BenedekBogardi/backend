@@ -74,8 +74,16 @@ export class TeachersService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} teacher`;
+  async remove(id: number) {
+    try {
+      return await this.db.teacher.delete({
+        where: {
+          id
+        }
+      })
+    } catch {
+      return undefined;
+    }
   }
 
   async findUserByToken(token: string) {
