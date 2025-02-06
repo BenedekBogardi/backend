@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -30,9 +30,9 @@ export class TeachersService {
     const teacher = await this.db.teacher.findUnique({
       where: { email: loginData.email },
     });
-    console.log((await bcrypt.compare(loginData.password, teacher.password)));
+    //console.log((await bcrypt.compare(loginData.password, teacher.password)));
     if (!teacher || !(await bcrypt.compare(loginData.password, teacher.password))) {
-      throw new UnauthorizedException('Érvénytelen név v. jelszó!');
+      throw new UnauthorizedException('Érvénytelen e-mail cím, vagy jelszó!')
     }
 
     const token = randomBytes(32).toString('hex');
@@ -56,6 +56,9 @@ export class TeachersService {
   }
 
   findOne(id: number) {
+    if (isNaN(id)) {
+      throw new HttpException('Invalid ID: must be a number', HttpStatus.BAD_REQUEST);
+    }
     return this.db.teacher.findUnique({
       where: {
         id
@@ -64,6 +67,9 @@ export class TeachersService {
   }
 
   async update(id: number, updateTeacherDto: UpdateTeacherDto) {
+    if (isNaN(id)) {
+      throw new HttpException('Invalid ID: must be a number', HttpStatus.BAD_REQUEST);
+    }
     try {
       return await this.db.teacher.update({
         where: { id },
@@ -75,6 +81,9 @@ export class TeachersService {
   }
 
   async remove(id: number) {
+    if (isNaN(id)) {
+      throw new HttpException('Invalid ID: must be a number', HttpStatus.BAD_REQUEST);
+    }
     try {
       return await this.db.teacher.delete({
         where: {

@@ -4,7 +4,7 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { LoginDto } from './dto/login-dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBody, ApiBadRequestResponse, ApiResponse, ApiParam, getSchemaPath } from '@nestjs/swagger';
+import { ApiBody, ApiBadRequestResponse, ApiResponse, ApiParam, getSchemaPath, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Teacher } from './entities/teacher.entity';
 
 @Controller('teachers')
@@ -12,23 +12,16 @@ export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 
   @Post()
-  @ApiBody({ type: [CreateTeacherDto] })
-  @ApiParam({
-    name: 'body',
-    type: 'object',
-    description: 'Teacher object that needs to be added.',
-    required: true,
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(CreateTeacherDto) },
-      ],
-    },
-  })
+  @ApiOperation({ summary: 'Adds a new teacher' })
+  @ApiResponse({ status: 404, description: 'Not found' })
+  @ApiResponse({ status: 201, description: 'Teacher added succesfully' })
+  @ApiBody({ type: CreateTeacherDto, description: 'Teacher object that needs to be added.' })
   create(@Body() createTeacherDto: CreateTeacherDto) {
     return this.teachersService.create(createTeacherDto);
   }
 
   @Post('login')
+  @ApiOperation({ summary: 'Logs teacher into the system' })
   @ApiParam({
     name: 'password',
     type: 'string',
@@ -39,22 +32,19 @@ export class TeachersController {
     type: 'string',
     description: 'The e-mail address of the teacher.'
   })
-  @ApiResponse({ status: 201, description: 'Teacher has succesfully logged in. Token has been created.'})
+  @ApiResponse({ status: 201, description: 'Teacher has succesfully logged in. Token has been created.', type: LoginDto})
   @ApiResponse({ status: 401, description: 'Unauthorized.'})
   async login(@Body() loginData: LoginDto) {
-
     return await this.teachersService.login(loginData);
-      
   }
   
   
   @Get()
-  @ApiBody({
-    description: "List all of the teachers.",
-  })
-  @ApiResponse({ status: 201, description: 'Teacher has been succesfully added.', type: Teacher})
+  @ApiOperation({ summary: 'List all teachers' })
+  @ApiResponse({ status: 200, description: 'Request OK', type: Teacher})
   @ApiResponse({ status: 403, description: 'Forbidden.'})
   @ApiResponse({ status: 401, description: 'Unauthorized.'})
+  @ApiOkResponse({type: CreateTeacherDto})
   @UseGuards(AuthGuard('bearer'))
     findAll(@Request() request) {
       console.log(request.user);
@@ -62,7 +52,9 @@ export class TeachersController {
     }
     
   @Get(':id')
-  @ApiResponse({ status: 200, description: 'Success - GET request for the given unique ID of the teacher.', type: Teacher})
+  @ApiOperation({ summary: 'Find a teacher by ID' })
+  @ApiResponse({ status: 200, description: 'Request OK', type: Teacher})
+  @ApiResponse({ status: 400, description: 'Invalid request'})
   @ApiResponse({ status: 404, description: 'Not found.'})
   async findOne(@Param('id') id: string) {
     const teacher = await this.teachersService.findOne(+id);
@@ -71,7 +63,8 @@ export class TeachersController {
     return teacher;
   }
 
-  @Patch(':id')  
+  @Patch(':id')
+  @ApiOperation({ summary: 'Updates a teacher by ID' })
   @ApiParam({
     name: 'assignmentId',
     type: 'string',
@@ -113,6 +106,7 @@ export class TeachersController {
     description: 'The full name of the teacher.'
   })
   @ApiResponse({ status: 200, description: 'The modified data of the teacher.' })
+  @ApiResponse({ status: 400, description: 'Invalid request'})
   @ApiBadRequestResponse({ description: 'The supplied data was invalid.' })
   async update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
     const teacher = await this.teachersService.update(+id, updateTeacherDto);
@@ -122,8 +116,10 @@ export class TeachersController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a teacher' })
   @HttpCode(204)
-  @ApiResponse({ status: 204, description: 'Success - DELETE request for the teacher with the given unique ID', type: Teacher})
+  @ApiResponse({ status: 204, description: 'Teacher deleted.', type: Teacher})
+  @ApiResponse({ status: 400, description: 'Invalid request'})
   @ApiResponse({ status: 404, description: 'Not found.'})
   async remove(@Param('id') id: string) {
     const success = await this.teachersService.remove(+id);
