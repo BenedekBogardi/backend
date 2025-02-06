@@ -59,6 +59,14 @@ async function main() {
             },
         });
     }
+
+    await prisma.admin.create({
+        data: {
+            name: faker.person.fullName(),
+            email: `${faker.person.firstName()}@citromail.com`,
+            password: "alma"
+        }
+    })
 }
 
 main()
