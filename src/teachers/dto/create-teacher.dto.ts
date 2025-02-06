@@ -6,14 +6,16 @@ export class CreateTeacherDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
-        description: 'Full name of teacher'
+        description: 'Full name of teacher',
+        example: 'John Doe'
     })
     name: string;
 
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
-        description: 'The subject being taught by the teacher.'
+        description: 'The subject being taught by the teacher.',
+        example: 'Történelem'
     })
     subjectTeacher: string;
 
@@ -22,14 +24,16 @@ export class CreateTeacherDto {
     @Min(0)
     @ApiProperty({
         description: 'Hourly rate/pricing of the teacher in HUF currency.',
-        minimum: 0
+        minimum: 0,
+        example: 5000
     })
     hourlyRate: number;
 
     @IsNotEmpty()
     @IsEmail()
     @ApiProperty({
-        description: 'E-mail address of the teacher.'
+        description: 'E-mail address of the teacher.',
+        example: "john.doe@example.com"
     })
     email: string;
 

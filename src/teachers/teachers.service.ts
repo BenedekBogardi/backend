@@ -27,12 +27,15 @@ export class TeachersService {
   }
 
   async login(loginData: LoginDto) {
+    if (typeof loginData.email !== 'string' || typeof loginData.password !== 'string') {
+      throw new HttpException('Invalid input: email and password must be strings', HttpStatus.BAD_REQUEST);
+    }
     const teacher = await this.db.teacher.findUnique({
       where: { email: loginData.email },
     });
     //console.log((await bcrypt.compare(loginData.password, teacher.password)));
     if (!teacher || !(await bcrypt.compare(loginData.password, teacher.password))) {
-      throw new UnauthorizedException('Érvénytelen e-mail cím, vagy jelszó!')
+      throw new UnauthorizedException('Érvénytelen e-mail cím, vagy jelszó!') //angolosítani kell még
     }
 
     const token = randomBytes(32).toString('hex');

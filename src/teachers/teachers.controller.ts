@@ -33,7 +33,9 @@ export class TeachersController {
     description: 'The e-mail address of the teacher.'
   })
   @ApiResponse({ status: 201, description: 'Teacher has succesfully logged in. Token has been created.', type: LoginDto})
+  @ApiResponse({ status: 400, description: 'Invalid input.'})
   @ApiResponse({ status: 401, description: 'Unauthorized.'})
+  @ApiBody({ type: LoginDto })
   async login(@Body() loginData: LoginDto) {
     return await this.teachersService.login(loginData);
   }
@@ -54,7 +56,7 @@ export class TeachersController {
   @Get(':id')
   @ApiOperation({ summary: 'Find a teacher by ID' })
   @ApiResponse({ status: 200, description: 'Request OK', type: Teacher})
-  @ApiResponse({ status: 400, description: 'Invalid request'})
+  @ApiResponse({ status: 400, description: 'Invalid input'})
   @ApiResponse({ status: 404, description: 'Not found.'})
   async findOne(@Param('id') id: string) {
     const teacher = await this.teachersService.findOne(+id);
