@@ -122,3 +122,4 @@ export class StudentsController {
       throw new NotFoundException('No student with ID ' + id);
     }
 }
+}
