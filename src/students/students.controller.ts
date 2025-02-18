@@ -11,7 +11,7 @@ import { Student } from './entities/student.entity';
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
-  @Post()
+  @Post('create')
   @ApiOperation({ summary: 'Adds a new student' })
   @ApiResponse({ status: 404, description: 'Not found' })
   @ApiResponse({ status: 201, description: 'Student added succesfully' })
