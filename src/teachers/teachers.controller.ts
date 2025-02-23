@@ -11,7 +11,7 @@ import { Teacher } from './entities/teacher.entity';
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 
-  @Post()
+  @Post('create')
   @ApiOperation({ summary: 'Adds a new teacher' })
   @ApiResponse({ status: 404, description: 'Not found' })
   @ApiResponse({ status: 201, description: 'Teacher added succesfully' })
@@ -37,7 +37,12 @@ export class TeachersController {
   @ApiResponse({ status: 401, description: 'Unauthorized.'})
   @ApiBody({ type: LoginDto })
   async login(@Body() loginData: LoginDto) {
-    return await this.teachersService.login(loginData);
+    try {
+      console.log(loginData.password);
+      return await this.teachersService.login(loginData);
+    } catch {
+      throw new UnauthorizedException("Érvénytelen név v. jelszó!")
+    }
   }
   
   
