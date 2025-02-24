@@ -33,9 +33,8 @@ export class TeachersService {
     const teacher = await this.db.teacher.findUnique({
       where: { email: loginData.email },
     });
-    //console.log((await bcrypt.compare(loginData.password, teacher.password)));
     if (!teacher || !(await bcrypt.compare(loginData.password, teacher.password))) {
-      throw new UnauthorizedException('Érvénytelen e-mail cím, vagy jelszó!') //angolosítani kell még
+      throw new UnauthorizedException('Érvénytelen e-mail cím, vagy jelszó!')
     }
 
     const token = randomBytes(32).toString('hex');

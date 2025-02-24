@@ -3,9 +3,9 @@ import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { LoginDto } from './dto/login-dto';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiBadRequestResponse, ApiResponse, ApiParam, getSchemaPath, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Teacher } from './entities/teacher.entity';
+import { CustomAuthGuard } from 'src/auth/custom-auth.guard';
 
 @Controller('teachers')
 export class TeachersController {
@@ -52,7 +52,7 @@ export class TeachersController {
   @ApiResponse({ status: 403, description: 'Forbidden.'})
   @ApiResponse({ status: 401, description: 'Unauthorized.'})
   @ApiOkResponse({type: CreateTeacherDto})
-  @UseGuards(AuthGuard('bearer'))
+  @UseGuards()
     findAll(@Request() request) {
       console.log(request.user);
       return this.teachersService.findAll();
