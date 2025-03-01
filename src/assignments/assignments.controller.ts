@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Query } from '@nestjs/common';
 import { AssignmentsService } from './assignments.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
@@ -12,10 +12,11 @@ export class AssignmentsController {
     return this.assignmentsService.create(createAssignmentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.assignmentsService.findAll();
-  }
+   @Get()
+    async findAll(@Query('subject') subject?: string) {
+    return this.assignmentsService.findAll(subject);
+    }
+
 
   @Get(':id')
   async findOne(@Param('id') id: string) {

@@ -16,8 +16,10 @@ export class AssignmentsService {
     });
   }
 
-  findAll() {
-    return this.db.assignment.findMany();
+  findAll(subject?: string) {
+    return this.db.assignment.findMany({
+      where: subject ? { subject } : {},
+    });
   }
 
   findOne(id: number) {
