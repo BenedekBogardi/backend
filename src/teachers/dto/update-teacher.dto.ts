@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateTeacherDto } from './create-teacher.dto';
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsArray, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateTeacherDto extends PartialType(CreateTeacherDto) {
@@ -38,15 +38,11 @@ export class UpdateTeacherDto extends PartialType(CreateTeacherDto) {
     })
     email: string;
 
-    @IsNotEmpty()
-    @Min(0)
-    @Max(30)
-    @ApiProperty({
-        description: 'The number of students that the teacher has.',
-        minimum: 0,
-        maximum: 30
-    })
-    numberOfStudents: number;
+    @IsOptional()
+    @ApiProperty({ description: "List of student IDs to be added to the teacher", example: [1, 2, 3] })
+    @IsArray()
+    @IsNumber({}, { each: true })
+    connectStudents?: number[];
 
     @IsNotEmpty()
     @Min(1)

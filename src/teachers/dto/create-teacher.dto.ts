@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Max, Min } from "class-validator";
+import { IsEmail, isNotEmpty, IsNotEmpty, IsNumber, IsString, Max, Min } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
 
@@ -38,14 +38,12 @@ export class CreateTeacherDto {
     email: string;
 
     @IsNotEmpty()
-    @Min(0)
-    @Max(30)
+    @IsNumber({}, { each: true })
     @ApiProperty({
-        description: 'The number of students that the teacher has.',
-        minimum: 0,
-        maximum: 30
+        description: 'A list of the student ids taught by the teacher',
+        example: [1, 2, 3]
     })
-    numberOfStudents: number;
+    students: number[];
 
     @IsNotEmpty()
     @Min(1)

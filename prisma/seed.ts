@@ -34,11 +34,11 @@ async function main() {
                 subjectTeacher: randomAssignment.subject,
                 hourlyRate: faker.number.int({ min: 2000, max: 10000 }),
                 email: `${fName.toLowerCase()}.${lName.toLowerCase()}${Math.floor(Math.random() * 1000)}@citromail.com`,
-                numberOfStudents: 0,
                 rating: faker.number.int({ min: 1, max: 10 }),
                 assignmentId: randomAssignment.id,
                 password: hashedPassword,
-                role: "Teacher"
+                role: "Teacher",
+                students: {}
             },
         });
     }

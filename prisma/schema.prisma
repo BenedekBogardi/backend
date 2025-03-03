@@ -38,7 +38,6 @@ model Teacher {
   subjectTeacher  String
   hourlyRate      Int
   email           String    @unique
-  numberOfStudents Int
   rating          Int
   password        String
   role            Role
@@ -46,6 +45,8 @@ model Teacher {
 
   assignmentId    Int
   Assignment Assignment[] @relation("TeacherAssignments")
+
+  students Student[] 
 }
 
 model Student {
@@ -59,6 +60,9 @@ model Student {
 
   assignmentId    Int 
   Assignment Assignment[] @relation("StudentAssignments")
+
+  teacherId Int
+  teacher Teacher @relation(fields: [teacherId], references: [id])
 }
 
 model Token {

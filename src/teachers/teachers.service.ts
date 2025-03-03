@@ -20,6 +20,9 @@ export class TeachersService {
         ...createTeacherDto,
         role: 'Teacher',
         password: hashedPassword,
+        students: {
+          connect: createTeacherDto.students.map(id => ({ id }))
+        }
       }
     });
     delete newTeacher.password;
@@ -75,8 +78,13 @@ export class TeachersService {
     try {
       return await this.db.teacher.update({
         where: { id },
-        data: updateTeacherDto
-      });
+        data: {
+            ...(updateTeacherDto as any),
+            students: {
+                connect: updateTeacherDto.connectStudents?.map(studentId => ({ id: studentId })) || [],
+            }
+        }
+    });
     } catch {
       return undefined;
     }
