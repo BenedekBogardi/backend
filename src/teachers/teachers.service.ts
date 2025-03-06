@@ -19,10 +19,7 @@ export class TeachersService {
       data: {
         ...createTeacherDto,
         role: 'Teacher',
-        password: hashedPassword,
-        students: {
-          connect: createTeacherDto.students.map(id => ({ id }))
-        }
+        password: hashedPassword
       }
     });
     delete newTeacher.password;

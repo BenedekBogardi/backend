@@ -38,14 +38,6 @@ export class CreateTeacherDto {
     email: string;
 
     @IsNotEmpty()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        description: 'A list of the student ids taught by the teacher',
-        example: [1, 2, 3]
-    })
-    students: number[];
-
-    @IsNotEmpty()
     @Min(1)
     @Max(10)
     @ApiProperty({

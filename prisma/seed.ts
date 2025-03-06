@@ -37,8 +37,7 @@ async function main() {
                 rating: faker.number.int({ min: 1, max: 10 }),
                 assignmentId: randomAssignment.id,
                 password: hashedPassword,
-                role: "Teacher",
-                students: {}
+                role: "Teacher"
             },
         });
     }
@@ -55,6 +54,7 @@ async function main() {
                 email: `${fName.toLowerCase()}.${lName.toLowerCase()}${Math.floor(Math.random() * 1000)}@citromail.com`,
                 assignmentId: randomAssignment.id,
                 password: hashedPassword,
+                teacherId: null,
                 role: "Student"
             },
         });
