@@ -16,7 +16,7 @@ import { JwtStrategy } from './jwt.strategy';
   imports: [UsersModule, PassportModule, JwtModule.register({
     secret: authConstants.jwt_secret || "alaptokentest",
     signOptions: {
-      expiresIn: "60s",
+      expiresIn: "60min",
     }
   })],
 })
