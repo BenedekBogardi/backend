@@ -82,5 +82,5 @@ model StudentAssignment {
   assignment   Assignment @relation(fields: [assignmentId], references: [id])
   assignmentId Int
 
-  @@id([studentId, assignmentId]) //sablon kompozitkulcs a n-m kapcsolathoz
+  @@id([studentId, assignmentId])
 }
