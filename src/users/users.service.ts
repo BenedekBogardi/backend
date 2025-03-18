@@ -16,6 +16,20 @@ export class UsersService {
             }
         })
     }
+
+    async findTeachers() {
+        return this.prisma.user.findMany({
+          where: { role: 'Teacher' },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+          },
+        });
+      }
+
     async getSelf(id: number) {
         const u = await this.prisma.user.findFirst({
             where: {

@@ -12,18 +12,35 @@ async function main() {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash("alma", saltRounds);
 
+    let i = 0;
+
     const users = await Promise.all(
         Array.from({ length: 20 }).map(async () => {
             var firstN = faker.person.firstName();
             var lastN = faker.person.lastName();
-            return prisma.user.create({
-                data: {
-                    firstName: firstN,
-                    lastName: lastN,
-                    email: `${lastN}.${firstN}@citromail.com`,
-                    password: await bcrypt.hash("password123", saltRounds),
-                },
-            });
+            i++;
+            if(i%2==0){
+                return prisma.user.create({
+                    data: {
+                        firstName: firstN,
+                        lastName: lastN,
+                        email: `${lastN}.${firstN}@citromail.com`,
+                        password: await bcrypt.hash("alma", saltRounds),
+                        role: $Enums.Role.Student
+                    },
+                });
+            }
+            else{
+                return prisma.user.create({
+                    data: {
+                        firstName: firstN,
+                        lastName: lastN,
+                        email: `${lastN}.${firstN}@citromail.com`,
+                        password: await bcrypt.hash("alma", saltRounds),
+                        role: $Enums.Role.Teacher
+                    },
+                });
+            }
         })
     );
 
