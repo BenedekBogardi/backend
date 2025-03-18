@@ -55,6 +55,7 @@ export class UsersService {
         if (!u) throw new UnauthorizedException
         if (u.role === "Teacher") {
             const teacher: TeacherProfileDto = {
+                id: u.id,
                 email: u.email,
                 firstName: u.firstName,
                 lastName: u.lastName,
@@ -66,6 +67,7 @@ export class UsersService {
         }
         else {
             const student : StudentProfileDto = {
+                id: u.id,
                 email: u.email,
                 firstName: u.firstName,
                 lastName: u.lastName,
