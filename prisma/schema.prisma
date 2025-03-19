@@ -7,20 +7,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Subjects {
+  Maths
+  History
+  Literature
+  English
+  Science
+  Compsci
+}
+
 enum Role {
   Admin
   Teacher
   Student
 }
 
-model Assignment {
-  id          Int      @id @default(autoincrement())
-  subject     String 
-  ageGroup    String
-  assignments String
+enum Level {
+  Elementary
+  Secondary
+  High
+  University
+}
 
-  teachers    Teacher[] @relation("TeacherAssignments")
-  students    Student[] @relation("StudentAssignments")
+model Assignment {
+  id          Int                 @id @default(autoincrement())
+  subject     String
+  name        String
+  description        String
+  ageGroup    String
+  teacher     Teacher             @relation(fields: [teacherId], references: [id])
+  teacherId   Int
+  students    StudentAssignment[]
 }
 
 model Admin {
@@ -29,45 +46,41 @@ model Admin {
   email    String @unique
   password String
   role     Role   @default(Admin)
-  tokens   Token[]
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  firstName String
+  lastName  String
+  password  String
+  email     String @unique
+  role      Role   @default(Student)
+
+  teacher Teacher?
+  student Student?
 }
 
 model Teacher {
-  id              Int        @id @default(autoincrement())
-  name            String
-  subjectTeacher  String
-  hourlyRate      Int
-  email           String    @unique
-  rating          Int
-  password        String
-  role            Role
-  tokens          Token[]
-
-  assignmentId    Int
-  Assignment Assignment[] @relation("TeacherAssignments")
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [id], references: [id], onDelete: Cascade)
+  subject    Subjects
+  hourlyRate Int
+  rating     Int
+  Assignment Assignment[]
 }
 
 model Student {
-  id              Int        @id @default(autoincrement())
-  name            String
-  email           String    @unique
-  ageGroup        String
-  password        String
-  role            Role
-  tokens          Token[]
-
-  assignmentId    Int 
-  Assignment Assignment[] @relation("StudentAssignments")
-
-  teacherId Int?
+  id                 Int                 @id @default(autoincrement())
+  user               User                @relation(fields: [id], references: [id], onDelete: Cascade)
+  ageGroup           Level
+  studentAssignments StudentAssignment[]
 }
 
-model Token {
-  token String @id
-  admin Admin? @relation(fields: [adminId], references: [id], onDelete: Cascade)
-  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  student Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  adminId Int?
-  teacherId Int?
-  studentId Int?
+model StudentAssignment {
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId Int
+
+  @@id([studentId, assignmentId])
 }

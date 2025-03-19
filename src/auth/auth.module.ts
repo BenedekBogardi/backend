@@ -1,13 +1,23 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { TokenStrategy } from './token.strategy';
-import { TeachersModule } from 'src/teachers/teachers.module';
-import { StudentsModule } from 'src/students/students.module';
+import { UsersService } from 'src/users/users.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma.service';
+import { UsersModule } from 'src/users/users.module';
+import { PassportModule } from '@nestjs/passport';
+import { authConstants } from './auth.constants';
+import { LocalStrategy } from './local.strategy';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
-  imports: [TeachersModule,StudentsModule],
   controllers: [AuthController],
-  providers: [AuthService, TokenStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, UsersService, PrismaService],
+  imports: [UsersModule, PassportModule, JwtModule.register({
+    secret: authConstants.jwt_secret || "alaptokentest",
+    signOptions: {
+      expiresIn: "60min",
+    }
+  })],
 })
 export class AuthModule {}

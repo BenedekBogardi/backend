@@ -10,10 +10,11 @@ export class AssignmentsService {
   constructor(db: PrismaService) {
     this.db = db;
   }
-  create(createAssignmentDto: CreateAssignmentDto) {
+  create(dto: CreateAssignmentDto) {
     return this.db.assignment.create({
-      data: createAssignmentDto
-    });
+      data: dto
+    })
+    ;
   }
 
   findAll(subject?: string) {

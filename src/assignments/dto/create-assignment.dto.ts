@@ -1,16 +1,17 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { $Enums, Teacher } from "@prisma/client";
+import { isNotEmpty, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateAssignmentDto {
 
     @IsNotEmpty()
-    @IsString()
-    subject: string;
+    subject: $Enums.Subjects;
 
     @IsNotEmpty()
-    @IsString()
-    ageGroup: string;
+    ageGroup: $Enums.Level;
 
     @IsNotEmpty()
-    @IsString()
-    assignments: string;
+    teacherId: number
+    @IsNotEmpty()
+    name: string
+    description: string
 }
