@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { TeacherProfileDto } from './profile/TeacherProfileDto';
 import { $Enums } from '@prisma/client';
 import { StudentProfileDto } from './profile/StudentProfile.dto';
+import { Console } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -31,14 +32,15 @@ export class UsersService {
       }
 
     async getSelf(id: number) {
+        console.log("Id at get self user service: ", id);
         const u = await this.prisma.user.findFirst({
             where: {
-                id
+                id: id
             },
             include: {
                 teacher: {
                     where: {
-                        id
+                        id: id
                     },
                     include: {
                         user: {
@@ -51,7 +53,7 @@ export class UsersService {
                 },
                 student: {
                     where: {
-                        id
+                        id: id
                     },
                     include: {
                         user: {
@@ -63,9 +65,8 @@ export class UsersService {
                         },
                     }
                 }
-            
         })
-
+        console.log("self at user service before if(u.some): ", u.email);
         if (!u) throw new UnauthorizedException
         if (u.role === "Teacher") {
             const teacher: TeacherProfileDto = {
@@ -77,6 +78,7 @@ export class UsersService {
                 role: u.role
                 
             }
+            console.log("Self at user service (teacher): ", teacher);
             return teacher
         }
         else {
@@ -89,6 +91,7 @@ export class UsersService {
                 role: u.role
 
             }
+            console.log("Self at user service (student): ", student);
             return student
         }
 

@@ -42,7 +42,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials')
     }
     console.log(user.email, user.password, user.id)
-    console.log(validatedUser)
+    console.log("Validate: ", validatedUser)
     const payload = { email: validatedUser.email, sub: validatedUser.id };
     const token = this.jwtService.sign(payload);
     //console.log(user.email, user.id, user.password)
@@ -106,6 +106,7 @@ export class AuthService {
   }
 
   async self(id: number) {
+    console.log("Self at auth service: ", this.userService.getSelf(id));
     return this.userService.getSelf(id);
   }
 }

@@ -29,6 +29,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get("/self")
     async self(@Self() user) {
+        console.log("Self at auth controller: ", this.authService.self(user));
         return this.authService.self(user);
     }
 }
