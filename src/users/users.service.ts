@@ -9,10 +9,10 @@ export class UsersService {
     constructor( private readonly prisma: PrismaService) {
     }
 
-    async findUserByEmail(email: string) {
-        return this.prisma.user.findFirst({
+    findUserByEmail(email: string) {
+        return this.prisma.user.findUnique({
             where: {
-                email
+                email: email,
             }
         })
     }

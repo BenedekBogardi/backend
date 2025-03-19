@@ -16,21 +16,36 @@ export class AuthService {
   ) {}
   async validateUser(email: string, password: string) {
     const user = await this.userService.findUserByEmail(email);
+    console.log("User:" + user)
+    console.log("Password1:" + password)
+    console.log("Password2:" + user.password)
     if (
       user &&
-      user.password === (await bcrypt.compare(password, user.password))
+      await bcrypt.compare(password, user.password)
+
     ) {
       return user;
     }
     return null;
   }
   async login(loginData: LoginDto) {
-    const user = await this.userService.findUserByEmail(loginData.email);
+    console.log(loginData)
+    const email = loginData.username
+    const user = await this.userService.findUserByEmail(email);
+    console.log("EMAIL CHECK: " + user.email)
     if (!user) {
       return null;
     }
-    const payload = { email: user.email, sub: user.id };
+    const validatedUser = await this.validateUser(user.email, loginData.password);
+
+    if(!validatedUser){
+      throw new UnauthorizedException('Invalid credentials')
+    }
+    console.log(user.email, user.password, user.id)
+    console.log(validatedUser)
+    const payload = { email: validatedUser.email, sub: validatedUser.id };
     const token = this.jwtService.sign(payload);
+    //console.log(user.email, user.id, user.password)
     return {
       token,
     };
