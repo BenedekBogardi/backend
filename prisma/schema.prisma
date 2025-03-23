@@ -55,6 +55,7 @@ model User {
   password  String
   email     String @unique
   role      Role   @default(Student)
+  sTeacherId          Int?
 
   teacher Teacher?
   student Student?

@@ -3,7 +3,6 @@ import { PrismaService } from 'src/prisma.service';
 import { TeacherProfileDto } from './profile/TeacherProfileDto';
 import { $Enums } from '@prisma/client';
 import { StudentProfileDto } from './profile/StudentProfile.dto';
-import { Console } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -18,18 +17,57 @@ export class UsersService {
         })
     }
 
+    selectTeacher(studentId: number, sTeacherId: number) {
+        return this.prisma.user.update({
+            where: {
+                id: Number(studentId),
+                role: 'Student'
+            },
+            data: {
+                sTeacherId: Number(sTeacherId)
+            }
+        })
+    }
+
     async findTeachers() {
         return this.prisma.user.findMany({
-          where: { role: 'Teacher' },
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            role: true,
-          },
+            where: { role: 'Teacher' },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                role: true,
+                teacher: {
+                    select: {
+                        subject: true,
+                        hourlyRate: true,
+                        rating: true,
+                    },
+                },
+            },
         });
-      }
+    }
+    
+    async getStudentsForTeacher(teacherId: number) {
+        return this.prisma.user.findMany({
+            where: {
+                role: "Student",
+                sTeacherId: teacherId,
+            },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                student: {
+                    select: {
+                        ageGroup: true,
+                    },
+                },
+            },
+        });
+    }    
 
     async getSelf(id: number) {
         console.log("Id at get self user service: ", id);
