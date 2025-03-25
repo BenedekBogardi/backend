@@ -17,6 +17,17 @@ export class AssignmentsService {
     ;
   }
 
+  getAssigned() {
+    return this.db.studentAssignment.findMany({
+      include: {
+        student: {
+          include: { user: true } 
+        },
+        assignment: true 
+      }
+    });
+  }
+
   findAll(subject?: string) {
     return this.db.assignment.findMany({
       where: subject ? { subject } : {},
@@ -26,7 +37,7 @@ export class AssignmentsService {
   findOne(id: number) {
     return this.db.assignment.findUnique({
       where: {
-        id
+        id: Number(id)
       }
     });
   }

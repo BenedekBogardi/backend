@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -25,5 +25,20 @@ export class UsersController {
 
   const teacherId = req.user.userId;
   return this.usersService.getStudentsForTeacher(teacherId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get(":id")
+  async choosenStudent(@Param('id') id: string) {
+    return this.usersService.findStudentById((Number(id)));
+  }
+
+  @Post(':studentId/assignments/:assignmentId')
+  async assignAssignmentToStudent(@Param('studentId') studentId: number, @Param('assignmentId') assignmentId: number){
+    try {
+      return await this.usersService.addAssignmentToStudent(Number(studentId), Number(assignmentId));
+    } catch (error) {
+        throw new BadRequestException(error.message);
+    }
   }
 }

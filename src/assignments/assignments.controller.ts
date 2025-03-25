@@ -16,14 +16,18 @@ export class AssignmentsController {
     async findAll(@Query('subject') subject?: string) {
     return this.assignmentsService.findAll(subject);
     }
-
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-        const assignment = await this.assignmentsService.findOne(+id);
-        if (!assignment) throw new NotFoundException('No assignment with ID ' + id);
     
-        return assignment;
+    @Get('/assigned')
+    async assigned(){
+      return this.assignmentsService.getAssigned();
+    }
+
+    @Get(':id')
+    async findOne(@Param('id') id: string) {
+      const assignment = await this.assignmentsService.findOne(Number(id));    
+      if (!assignment) throw new NotFoundException('No assignment with ID ' + id);
+    
+      return assignment;
       }
 
   @Patch(':id')

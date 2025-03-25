@@ -29,6 +29,41 @@ export class UsersService {
         })
     }
 
+    findStudentById(id: number) {
+        if (!id) {
+            throw new Error("Invalid ID provided");
+        }
+    
+        return this.prisma.user.findUnique({
+            where: { id },
+            include: {
+                student: true
+            }
+        });
+    }
+
+    async addAssignmentToStudent(studentId: number, assignmentId: number) {
+        const existingAssignment = await this.prisma.studentAssignment.findFirst({
+            where: {
+                studentId,
+                assignmentId,
+            },
+        });
+    
+        if (existingAssignment) {
+            throw new Error("This assignment has already been assigned to the student.");
+        }
+    
+        return this.prisma.studentAssignment.create({
+            data: {
+                studentId,
+                assignmentId,
+            },
+        });
+    }
+    
+    
+
     async findTeachers() {
         return this.prisma.user.findMany({
             where: { role: 'Teacher' },
