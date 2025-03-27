@@ -75,6 +75,8 @@ model Student {
   user               User                @relation(fields: [id], references: [id], onDelete: Cascade)
   ageGroup           Level
   studentAssignments StudentAssignment[]
+
+  StudentAssignmentFile StudentAssignmentFile[]
 }
 
 model StudentAssignment {
@@ -82,6 +84,17 @@ model StudentAssignment {
   studentId    Int
   assignment   Assignment @relation(fields: [assignmentId], references: [id])
   assignmentId Int
+  completed    Boolean  @default(false)
 
   @@id([studentId, assignmentId])
 }
+
+model StudentAssignmentFile {
+  id         Int    @id @default(autoincrement())
+  student    Student @relation(fields: [studentId], references: [id])
+  studentId  Int
+  fileName   String
+  filePath   String
+  uploadedAt DateTime @default(now())
+}
+
