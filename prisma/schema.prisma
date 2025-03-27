@@ -94,7 +94,8 @@ model StudentAssignmentFile {
   student    Student @relation(fields: [studentId], references: [id])
   studentId  Int
   fileName   String
-  filePath   String
+  fileType   String
+  fileData   Bytes
   uploadedAt DateTime @default(now())
 }
 

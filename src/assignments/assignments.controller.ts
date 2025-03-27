@@ -16,32 +16,19 @@ import { AssignmentsService } from './assignments.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 
 @Controller('assignments')
 export class AssignmentsController {
   constructor(private readonly assignmentsService: AssignmentsService) {}
 
-  @Post('/upload')
-  @UseInterceptors(FilesInterceptor('files', 10, {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
-      },
-    }),
-  }))
+  @Post('upload')
+  @UseInterceptors(FilesInterceptor('files'))
   async uploadFile(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body('studentId') studentId: string
+    @Body() body,
   ) {
-    if (!files || files.length === 0) {
-      throw new Error('No files uploaded');
-    }
-    
-    return this.assignmentsService.saveUploadedFiles(files, Number(studentId));
+    const studentId = Number(body.studentId);
+    return this.assignmentsService.saveUploadedFiles(files, studentId);
   }
 
   @Post()
@@ -59,8 +46,11 @@ export class AssignmentsController {
     return this.assignmentsService.getAssigned();
   }
 
-  @Patch(":studentId/:assignmentId/complete")
-  completeTask(@Param('studentId', ParseIntPipe) studentId: number, @Param('assignmentId', ParseIntPipe) assignmentId: number,){
+  @Patch(':studentId/:assignmentId/complete')
+  completeTask(
+    @Param('studentId', ParseIntPipe) studentId: number,
+    @Param('assignmentId', ParseIntPipe) assignmentId: number,
+  ) {
     return this.assignmentsService.completeTask(studentId, assignmentId);
   }
 

@@ -11,6 +11,7 @@ export class AssignmentsService {
   constructor(db: PrismaService) {
     this.db = db;
   }
+  
   create(dto: CreateAssignmentDto) {
     return this.db.assignment.create({
       data: dto
@@ -19,24 +20,21 @@ export class AssignmentsService {
   }
 
   async saveUploadedFiles(files: Express.Multer.File[], studentId: number) {
-    if (!files || files.length === 0) {
-      throw new Error('No files received in service');
-    }
-  
-    console.log("Saving files to DB for student:", studentId);
-  
-    const savedFiles = await this.db.studentAssignmentFile.createMany({
-      data: files.map(file => ({
-        studentId: studentId,
-        filePath: file.path,
-        fileName: file.filename,
-        uploadedAt: new Date(),
-      })),
-    });
-  
-    console.log("Database response:", savedFiles);
-    return { message: 'Files uploaded successfully', files: savedFiles };
+    return Promise.all(
+      files.map(async (file) => {
+        return this.db.studentAssignmentFile.create({
+          data: {
+            studentId,
+            fileName: file.originalname,
+            fileType: file.mimetype,
+            fileData: file.buffer,
+            uploadedAt: new Date(),
+          },
+        });
+      })
+    );
   }
+  
   
 
   getAssigned() {
