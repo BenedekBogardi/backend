@@ -1,30 +1,38 @@
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
+import { ChatService } from "./chat.service";
+import { User } from "./interfaces/chat.interface";
 
 @WebSocketGateway(3002, { cors: { origin: "http://localhost:8081" } })
-export class ChatGateWay implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
+  constructor(private chatService: ChatService) {}
 
   private activeUsers: Record<string, string> = {};
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     console.log("User connected, waiting for authentication:", client.id);
   }
 
-  handleDisconnect(client: Socket) {
-    const username = this.activeUsers[client.id];
-    if (username) {
-      console.log(`${username} disconnected`);
-      this.server.emit("user-left", { message: `${username} has left the chat.` });
-      delete this.activeUsers[client.id];
-    }
+  async handleDisconnect(client: Socket) {
+    await this.chatService.removeUserFromAllRooms(client.id)
+    console.log("Client with id " + client.id + " has disconnected.")
+    
   }
 
   @SubscribeMessage("joinChat")
-  handleJoinChat(client: Socket, username: string) {
-    this.activeUsers[client.id] = username;
-    console.log(`${username} joined the chat`);
-    this.server.emit("user-joined", { message: `${username} has joined the chat!` });
+  async handleUserJoin(
+    @MessageBody()
+    payload: {
+      roomName: string
+      user: User
+    }
+  ) {
+    if (payload.user.socketId) {
+      console.log(`${payload.user.socketId} is joining ${payload.roomName}`)
+      await this.server.in(payload.user.socketId).socketsJoin(payload.roomName)
+      await this.chatService.addUserToRoom(payload.roomName, payload.user)
+    }
   }
 
   @SubscribeMessage("newMessage")
