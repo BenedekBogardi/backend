@@ -33,11 +33,13 @@ model Assignment {
   id          Int                 @id @default(autoincrement())
   subject     String
   name        String
-  description        String
+  description String
   ageGroup    String
   teacher     Teacher             @relation(fields: [teacherId], references: [id])
   teacherId   Int
   students    StudentAssignment[]
+
+  StudentAssignmentFile StudentAssignmentFile[]
 }
 
 model Admin {
@@ -49,13 +51,13 @@ model Admin {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  firstName String
-  lastName  String
-  password  String
-  email     String @unique
-  role      Role   @default(Student)
-  sTeacherId          Int?
+  id         Int    @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  password   String
+  email      String @unique
+  role       Role   @default(Student)
+  sTeacherId Int?
 
   teacher Teacher?
   student Student?
@@ -84,18 +86,21 @@ model StudentAssignment {
   studentId    Int
   assignment   Assignment @relation(fields: [assignmentId], references: [id])
   assignmentId Int
-  completed    Boolean  @default(false)
+  completed    Boolean    @default(false)
+  mark         Int        @default(0)
 
   @@id([studentId, assignmentId])
 }
 
 model StudentAssignmentFile {
-  id         Int    @id @default(autoincrement())
-  student    Student @relation(fields: [studentId], references: [id])
-  studentId  Int
-  fileName   String
-  fileType   String
-  fileData   Bytes
-  uploadedAt DateTime @default(now())
-}
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId Int
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    Int
+  fileName     String
+  fileType     String
+  fileData     Bytes
+  uploadedAt   DateTime   @default(now())
 
+  @@id([studentId, assignmentId])
+}

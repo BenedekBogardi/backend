@@ -58,6 +58,7 @@ export class UsersService {
             data: {
                 studentId,
                 assignmentId,
+                mark: 0
             },
         });
     }
