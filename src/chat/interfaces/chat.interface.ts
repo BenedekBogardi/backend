@@ -10,6 +10,7 @@ export interface User {
     name: string
     host: User
     users: User[]
+    messages: Message[]
   }
   
   export interface Message {

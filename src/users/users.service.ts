@@ -105,6 +105,15 @@ export class UsersService {
         });
     }    
 
+    async getTeacherUserById(nTeacherId: number){
+        return this.prisma.user.findUnique({
+          where: {
+            id: nTeacherId,
+          },
+        });
+      }
+      
+
     async getSelf(id: number) {
         console.log("Id at get self user service: ", id);
         const u = await this.prisma.user.findFirst({
@@ -150,7 +159,6 @@ export class UsersService {
                 lastName: u.lastName,
                 subject: u.teacher.subject,
                 role: u.role
-                
             }
             console.log("Self at user service (teacher): ", teacher);
             return teacher
@@ -162,8 +170,8 @@ export class UsersService {
                 firstName: u.firstName,
                 lastName: u.lastName,
                 ageGroup: u.student.ageGroup,
-                role: u.role
-
+                role: u.role,
+                sTeacherId: u.sTeacherId
             }
             console.log("Self at user service (student): ", student);
             return student

@@ -7,4 +7,5 @@ export class StudentProfileDto {
     email: string;
     ageGroup: $Enums.Level
     role: $Enums.Role
+    sTeacherId: number;
 }

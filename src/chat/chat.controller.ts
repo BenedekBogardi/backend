@@ -1,6 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common'
-import { Room } from './interfaces/chat.interface'
-import { ChatService } from './chat.service'
+import { Controller, Get, Param } from '@nestjs/common';
+import { Room } from './interfaces/chat.interface';
+import { ChatService } from './chat.service';
 
 @Controller()
 export class UserController {
@@ -8,13 +8,20 @@ export class UserController {
 
   @Get('/rooms')
   async getAllRooms(): Promise<Room[]> {
-    return await this.chatService.getRooms()
+    return await this.chatService.getRooms();
   }
 
   @Get('/rooms/:room')
-  async getRoom(@Param() params): Promise<Room> {
-    const rooms = await this.chatService.getRooms()
-    const room = await this.chatService.getRoomByName(params.room)
-    return rooms[room]
+  async getRoom(@Param('room') roomName: string): Promise<{ lastMessage?: string }> {
+    const room = await this.chatService.getRoomByName(roomName);
+    if (!room) {
+      return null;
+    }
+
+    const lastMessage = await this.chatService.getLastMessageByRoom(roomName);
+
+    return {
+      lastMessage: lastMessage ? lastMessage.message : 'Nincs üzenet',
+    };
   }
 }

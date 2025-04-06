@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -9,6 +9,18 @@ export class UsersController {
   @Get('/teachers')
   async teachers() {
     return this.usersService.findTeachers();
+  }
+
+  @Get('teachers/:sTeacherId')
+  async getTeacherUserById(
+    @Param('sTeacherId', ParseIntPipe) nTeacherId: number
+  ){
+    const oTeacher = await this.usersService.getTeacherUserById(nTeacherId);
+    if (!oTeacher) {
+      throw new NotFoundException(`Teacher with ID ${nTeacherId} not found`);
+    }
+
+    return oTeacher;
   }
 
   @Post('/selectTeacher')

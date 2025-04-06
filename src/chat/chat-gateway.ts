@@ -37,6 +37,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage("newMessage")
   handleNewMessage(@MessageBody() message: { username: string; text: string }) {
+    console.log("Broadcast csatornában új üzenet: " + message.text)
     this.server.emit("message", message);
   }
 }
