@@ -6,11 +6,16 @@ export class ChatService {
   private rooms: Room[] = [];
 
   async addRoom(roomName: string, host: User): Promise<void> {
-    const room = await this.getRoomByName(roomName);
-    if (room === -1) {
+    const roomIndex = await this.getRoomByName(roomName);
+    if (roomIndex === -1) {
+      console.log(`Creating new room: ${roomName} with host: ${host.userId}`);
       this.rooms.push({ name: roomName, host, users: [host], messages: [] });
+    } else {
+      console.log(`Room ${roomName} already exists`);
     }
   }
+  
+  
 
   /*async getRoom(teacherId: string, studentId: string): Promise<Room> {
     let room = await this.roomRepository.findOne({
@@ -41,14 +46,21 @@ export class ChatService {
   async addUserToRoom(roomName: string, user: User): Promise<void> {
     const roomIndex = await this.getRoomByName(roomName);
     if (roomIndex !== -1) {
+      console.log(`Adding user ${user.socketId} to room ${roomName}`);
       this.rooms[roomIndex].users.push(user);
       if (this.rooms[roomIndex].host.userId === user.userId) {
+        console.log(`Updating host socketId for ${roomName}`);
         this.rooms[roomIndex].host.socketId = user.socketId;
+      } else {
+        console.log(`User ${user.socketId} is not the host`);
       }
     } else {
+      console.log(`Room ${roomName} doesn't exist, creating it`);
       await this.addRoom(roomName, user);
     }
   }
+  
+  
 
   async addMessageToRoom(roomName: string, message: Message): Promise<void> {
     const roomIndex = await this.getRoomByName(roomName);
@@ -72,8 +84,11 @@ export class ChatService {
   }
 
   async findRoomsByUserSocketId(socketId: string): Promise<Room[]> {
-    return this.rooms.filter((room) => room.users.some((user) => user.socketId === socketId));
+    const userRooms = this.rooms.filter((room) => room.users.some((user) => user.socketId === socketId));
+    console.log(`User with socketId ${socketId} is in rooms:`, userRooms.map(room => room.name));
+    return userRooms;
   }
+  
 
   async removeUserFromAllRooms(socketId: string): Promise<void> {
     const rooms = await this.findRoomsByUserSocketId(socketId);

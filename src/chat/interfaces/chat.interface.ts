@@ -1,8 +1,8 @@
 export interface User {
-    userId: number
+    userId: string
     userName: string
     socketId: string
-    role: 'student' | 'teacher'
+    role: 'Student' | 'Teacher'
     profileId: number
   }
   
