@@ -46,6 +46,7 @@ async function main() {
 
     const teachers = await Promise.all(
         users.map(async (user) => {
+            let r = faker.number.float({ min: 1, max: 10, fractionDigits: 1 })
             return prisma.teacher.create({
                 data: {
                     hourlyRate: faker.number.int({ min: 1000, max: 90000 }),
@@ -54,7 +55,8 @@ async function main() {
                             id: user.id,
                         },
                     },
-                    rating: faker.number.float({ min: 1, max: 10, fractionDigits: 1 }),
+                    rating: r,
+                    numberOfRatings: 1,
                     subject: faker.helpers.arrayElement(subjects),
                 },
             });

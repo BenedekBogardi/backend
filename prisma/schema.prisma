@@ -64,12 +64,13 @@ model User {
 }
 
 model Teacher {
-  id         Int          @id @default(autoincrement())
-  user       User         @relation(fields: [id], references: [id], onDelete: Cascade)
-  subject    Subjects
-  hourlyRate Int
-  rating     Int
-  Assignment Assignment[]
+  id              Int          @id @default(autoincrement())
+  user            User         @relation(fields: [id], references: [id], onDelete: Cascade)
+  subject         Subjects
+  hourlyRate      Int
+  rating          Float
+  numberOfRatings Int
+  Assignment      Assignment[]
 }
 
 model Student {

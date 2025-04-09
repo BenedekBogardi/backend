@@ -1,4 +1,15 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -12,33 +23,47 @@ export class UsersController {
   }
 
   @Post('/selectTeacher')
-  async selectTeacher(@Body() body: { studentId: number; sTeacherId: number}) {
+  async selectTeacher(@Body() body: { studentId: number; sTeacherId: number }) {
     return this.usersService.selectTeacher(body.studentId, body.sTeacherId);
+  }
+
+  @Post('/rateTeacher/:teacherId/:score')
+  async rateTeacher(
+    @Param('teacherId', ParseIntPipe) teacherId: number,
+    @Param('score', ParseIntPipe) score: number
+  ) {
+    return this.usersService.rateTeacher(teacherId, score);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/students')
   async getStudentsForTeacher(@Req() req) {
-  if (!req.user) {
-    throw new UnauthorizedException('User not found in request');
-  }
+    if (!req.user) {
+      throw new UnauthorizedException('User not found in request');
+    }
 
-  const teacherId = req.user.userId;
-  return this.usersService.getStudentsForTeacher(teacherId);
+    const teacherId = req.user.userId;
+    return this.usersService.getStudentsForTeacher(teacherId);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get(":id")
+  @Get(':id')
   async choosenStudent(@Param('id') id: string) {
-    return this.usersService.findStudentById((Number(id)));
+    return this.usersService.findStudentById(Number(id));
   }
 
   @Post(':studentId/assignments/:assignmentId')
-  async assignAssignmentToStudent(@Param('studentId') studentId: number, @Param('assignmentId') assignmentId: number){
+  async assignAssignmentToStudent(
+    @Param('studentId') studentId: number,
+    @Param('assignmentId') assignmentId: number,
+  ) {
     try {
-      return await this.usersService.addAssignmentToStudent(Number(studentId), Number(assignmentId));
+      return await this.usersService.addAssignmentToStudent(
+        Number(studentId),
+        Number(assignmentId),
+      );
     } catch (error) {
-        throw new BadRequestException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 }

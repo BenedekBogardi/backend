@@ -77,6 +77,7 @@ export class AuthService {
                 },
                 hourlyRate: 3000,
                 rating: 5,
+                numberOfRatings: 1,
                 subject: 'Compsci',
               },
             },
