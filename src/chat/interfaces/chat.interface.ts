@@ -1,8 +1,8 @@
 export interface User {
-    userId: number
+    userId: string
     userName: string
     socketId: string
-    role: 'student' | 'teacher'
+    role: 'Student' | 'Teacher'
     profileId: number
   }
   
@@ -10,6 +10,7 @@ export interface User {
     name: string
     host: User
     users: User[]
+    messages: Message[]
   }
   
   export interface Message {

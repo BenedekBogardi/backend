@@ -181,6 +181,7 @@ export class UsersService {
                 email: true,
               },
             },
+<<<<<<< HEAD
           },
         },
       },
@@ -209,6 +210,83 @@ export class UsersService {
       };
       console.log('Self at user service (student): ', student);
       return student;
+=======
+        });
+    }    
+
+    async getTeacherUserById(nTeacherId: number){
+        return this.prisma.user.findUnique({
+          where: {
+            id: nTeacherId,
+          },
+        });
+      }
+      
+
+    async getSelf(id: number) {
+        console.log("Id at get self user service: ", id);
+        const u = await this.prisma.user.findFirst({
+            where: {
+                id: id
+            },
+            include: {
+                teacher: {
+                    where: {
+                        id: id
+                    },
+                    include: {
+                        user: {
+                            omit: {
+                                password: true,
+                                id: true
+                            }
+                        }
+                    }
+                },
+                student: {
+                    where: {
+                        id: id
+                    },
+                    include: {
+                        user: {
+                            omit: {
+                                password: true,
+                                id: true
+                            }
+                        }
+                        },
+                    }
+                }
+        })
+        console.log("self at user service before if(u.some): ", u.email);
+        if (!u) throw new UnauthorizedException
+        if (u.role === "Teacher") {
+            const teacher: TeacherProfileDto = {
+                id: u.id,
+                email: u.email,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                subject: u.teacher.subject,
+                role: u.role
+            }
+            console.log("Self at user service (teacher): ", teacher);
+            return teacher
+        }
+        else {
+            const student : StudentProfileDto = {
+                id: u.id,
+                email: u.email,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                ageGroup: u.student.ageGroup,
+                role: u.role,
+                sTeacherId: u.sTeacherId
+            }
+            console.log("Self at user service (student): ", student);
+            return student
+        }
+
+>>>>>>> 9f8209445d425432f254562d4edab716dac45213
     }
   }
 }
