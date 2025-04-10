@@ -1,9 +1,9 @@
-<<<<<<< HEAD
 import {
   BadRequestException,
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -11,9 +11,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-=======
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
->>>>>>> 9f8209445d425432f254562d4edab716dac45213
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 

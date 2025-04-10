@@ -56,6 +56,7 @@ export class AuthService {
     if (user) {
       throw new ConflictException();
     }
+  
     const hashedPassword = await bcrypt.hash(registerData.password, 10);
     if (hashedPassword) {
       const userData = {
@@ -65,9 +66,10 @@ export class AuthService {
         firstName: registerData.firstName,
         lastName: registerData.lastName,
       };
-      let user;
+  
+      let newUser;
       if (registerData.role === 'Teacher') {
-        user = await this.prisma.user.create({
+        newUser = await this.prisma.user.create({
           data: {
             ...userData,
             teacher: {
@@ -75,16 +77,16 @@ export class AuthService {
                 Assignment: {
                   create: [],
                 },
-                hourlyRate: 3000,
-                rating: 5,
-                numberOfRatings: 1,
-                subject: 'Compsci',
+                hourlyRate: registerData.hourlyRate ?? 0,
+                rating: 0,
+                numberOfRatings: 0,
+                subject: registerData.subject,
               },
             },
           },
         });
       } else {
-        user = await this.prisma.user.create({
+        newUser = await this.prisma.user.create({
           data: {
             ...userData,
             student: {
@@ -92,19 +94,19 @@ export class AuthService {
                 studentAssignments: {
                   create: [],
                 },
-                ageGroup: undefined,
+                ageGroup: registerData.ageGroup,
               },
             },
           },
         });
       }
-      const payload = { email: registerData.email, sub: user.id };
+  
+      const payload = { email: newUser.email, sub: newUser.id };
       const token = this.jwtService.sign(payload);
-      return {
-        token,
-      };
+      return { token };
     }
   }
+  
 
   async self(id: number) {
     console.log("Self at auth service: ", this.userService.getSelf(id));
