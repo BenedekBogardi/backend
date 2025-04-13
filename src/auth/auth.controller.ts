@@ -12,6 +12,7 @@ export class AuthController {
     }
 
     @Post("/login")
+    @UseGuards(AuthGuard('local'))
     async login(@Body() loginData: LoginDto) {
         return this.authService.login(loginData);
     }
@@ -27,7 +28,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get("/self")
-    async self(@Self() user) {
+    async self(@Self() user: number) {
+        console.log("Self at auth controller: ", this.authService.self(user));
         return this.authService.self(user);
     }
 }

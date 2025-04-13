@@ -33,11 +33,13 @@ model Assignment {
   id          Int                 @id @default(autoincrement())
   subject     String
   name        String
-  description        String
+  description String
   ageGroup    String
   teacher     Teacher             @relation(fields: [teacherId], references: [id])
   teacherId   Int
   students    StudentAssignment[]
+
+  StudentAssignmentFile StudentAssignmentFile[]
 }
 
 model Admin {
@@ -49,24 +51,26 @@ model Admin {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  firstName String
-  lastName  String
-  password  String
-  email     String @unique
-  role      Role   @default(Student)
+  id         Int    @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  password   String
+  email      String @unique
+  role       Role   @default(Student)
+  sTeacherId Int?
 
   teacher Teacher?
   student Student?
 }
 
 model Teacher {
-  id         Int          @id @default(autoincrement())
-  user       User         @relation(fields: [id], references: [id], onDelete: Cascade)
-  subject    Subjects
-  hourlyRate Int
-  rating     Int
-  Assignment Assignment[]
+  id              Int          @id @default(autoincrement())
+  user            User         @relation(fields: [id], references: [id], onDelete: Cascade)
+  subject         Subjects
+  hourlyRate      Int
+  rating          Float
+  numberOfRatings Int
+  Assignment      Assignment[]
 }
 
 model Student {
@@ -74,6 +78,8 @@ model Student {
   user               User                @relation(fields: [id], references: [id], onDelete: Cascade)
   ageGroup           Level
   studentAssignments StudentAssignment[]
+
+  StudentAssignmentFile StudentAssignmentFile[]
 }
 
 model StudentAssignment {
@@ -81,6 +87,21 @@ model StudentAssignment {
   studentId    Int
   assignment   Assignment @relation(fields: [assignmentId], references: [id])
   assignmentId Int
+  completed    Boolean    @default(false)
+  mark         Int        @default(0)
+
+  @@id([studentId, assignmentId])
+}
+
+model StudentAssignmentFile {
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId Int
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    Int
+  fileName     String
+  fileType     String
+  fileData     Bytes
+  uploadedAt   DateTime   @default(now())
 
   @@id([studentId, assignmentId])
 }
