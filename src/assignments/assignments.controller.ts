@@ -100,6 +100,11 @@ export class AssignmentsController {
     return this.assignmentsService.getAssigned();
   }
 
+  @Get('/returned/:teacherId')
+  async returned(@Param('teacherId', ParseIntPipe) teacherId: number) {
+    return this.assignmentsService.getReturned(teacherId);
+  }
+
   @Patch(':studentId/:assignmentId/complete')
   completeTask(
     @Param('studentId', ParseIntPipe) studentId: number,

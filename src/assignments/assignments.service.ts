@@ -148,6 +148,20 @@ export class AssignmentsService {
     });
   }
 
+  getReturned(teacherId: number) {
+    return this.db.studentAssignment.findMany({
+      where: {
+        assignment: {
+          teacherId: teacherId
+        }
+      },
+      include: {
+        student: true,
+        assignment: true,
+      }
+    });
+  }  
+
   completeTask(studentId: number, assignmentId: number) {
     return this.db.studentAssignment.update({
       where: {
