@@ -13,12 +13,15 @@ import {
   UploadedFiles,
   Res,
   BadRequestException,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AssignmentsService } from './assignments.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('assignments')
 export class AssignmentsController {
@@ -98,6 +101,13 @@ export class AssignmentsController {
   @Get('/assigned')
   async assigned() {
     return this.assignmentsService.getAssigned();
+  }
+
+  @Get('/teacherAssigned')
+  @UseGuards(AuthGuard('jwt'))
+  async getAssignedTasks(@Req() req) {
+    const teacherId = req.user.id;
+    return this.assignmentsService.getAssignedTasksByTeacher(teacherId);
   }
 
   @Get('/returned/:teacherId')

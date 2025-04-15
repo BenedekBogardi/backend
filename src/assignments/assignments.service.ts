@@ -113,7 +113,7 @@ export class AssignmentsService {
         uploadedAt: true,
       },
     });
-  }  
+  }
 
   async getTurnedInTasks(studentId: number) {
     const assignedTasks = await this.db.assignment.findMany({
@@ -148,19 +148,37 @@ export class AssignmentsService {
     });
   }
 
+  async getAssignedTasksByTeacher(teacherId: number) {
+    return this.db.studentAssignment.findMany({
+      where: {
+        assignment: {
+          teacherId: teacherId,
+        },
+      },
+      include: {
+        assignment: true,
+        student: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+  }
+
   getReturned(teacherId: number) {
     return this.db.studentAssignment.findMany({
       where: {
         assignment: {
-          teacherId: teacherId
-        }
+          teacherId: teacherId,
+        },
       },
       include: {
         student: true,
         assignment: true,
-      }
+      },
     });
-  }  
+  }
 
   completeTask(studentId: number, assignmentId: number) {
     return this.db.studentAssignment.update({
@@ -187,7 +205,7 @@ export class AssignmentsService {
       data: {
         mark: mark,
       },
-    })
+    });
   }
 
   getMarkedAssignments(studentId: number) {
@@ -196,9 +214,9 @@ export class AssignmentsService {
         studentId: studentId,
         mark: {
           gt: 0,
-        }
-      }
-    })
+        },
+      },
+    });
   }
 
   findAll(subject?: string) {
